@@ -650,6 +650,11 @@ func MetadataFromHeaders(headers []string) metadata.MD {
 	for _, part := range headers {
 		if part != "" {
 			pieces := strings.SplitN(part, ":", 2)
+			// Pseudo header field like :authority is prefixed with ":" and therefore end up with an empty name
+			if len(pieces) > 1 && pieces[0] == "" {
+				pieces = strings.SplitN(pieces[1], ":", 2)
+				pieces[0] = ":" + pieces[0]
+			}
 			if len(pieces) == 1 {
 				pieces = append(pieces, "") // if no value was specified, just make it "" (maybe the header value doesn't matter)
 			}
